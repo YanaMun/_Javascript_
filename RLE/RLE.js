@@ -50,21 +50,21 @@ function rle_decode(input){
     return result;
 }
 
-let fs = require('fs'); //подключили библиотеку
+let fs = require('fs'); 
 
 const args = process.argv
-const op = args[2]; // encode или decode
+const op = args[2]; 
 const inputFile = args[3];
 const outputFile = args[4];
-const inText = fs.readFileSync(inputFile); //Считали из файла
+const inText = fs.readFileSync(inputFile); 
 
 let res;
 if (op === 'code') {
-	var a = inText.toString() //сохранили в переменную как строку
+	var a = inText.toString() 
 	res=rle_encode(a);
-	console.log("Compression ratio = ", a.length/res.length); // степень сжатия
+	console.log("Compression ratio = ", a.length/res.length); 
     }else if (op === 'decode') {
-		var b = inText.toString() //сохранили в переменную как строку
+		var b = inText.toString() 
 		res=rle_decode(b);
 		console.log("Compression ratio = ", res.length/b.length);
 	}

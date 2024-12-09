@@ -27,14 +27,17 @@ function rle_decode(input) {
 
     while (i < input.length) {
         if (input[i] === '#') {
-            i++; // Пропускаем символ `#`
+            i++; // Пропускаем символ #
             let count = '';
-            while (!isNaN(input[i])) { // Читаем число (считываем пока символ — цифра)
+            while (!isNaN(input[i]) && i < input.length) { // Читаем число (считываем пока символ — цифра)
                 count += input[i];
                 i++;
             }
-            count = Number(count); // Преобразуем строку в число
-            result += input[i].repeat(count); // Повторяем символ указанное число раз
+            if (input[i] === '#') { // Если следующий символ также #
+                result += '#'.repeat(Number(count)); // Повторяем символ # указанное число раз
+            } else {
+                result += input[i].repeat(Number(count)); // Повторяем текущий символ указанное число раз
+            }
         } else {
             result += input[i]; // Обычный символ, добавляем его как есть
         }
@@ -43,6 +46,7 @@ function rle_decode(input) {
 
     return result;
 }
+
 
 let fs = require('fs'); // Подключаем библиотеку
 

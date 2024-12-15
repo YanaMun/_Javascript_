@@ -49,7 +49,7 @@ function boyerMooreSearch(text, pattern) {
             j--;
         }
 
-        if (j < 0) { // Найдено совпадение
+        if (j < 0) { // Найдено полное совпадение
             result.push(shift);
             // Смещение шаблона на следующую возможную позицию
             shift += patternLength;

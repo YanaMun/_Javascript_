@@ -1,4 +1,4 @@
-function rle_encode(input) {
+function rle_code(input) {
     let result = '';
     let i = 0;
 
@@ -51,14 +51,14 @@ function rle_decode(input) {
 let fs = require('fs'); // Подключаем библиотеку
 
 const args = process.argv;
-const op = args[2]; // encode или decode
+const op = args[2]; // code или decode
 const inputFile = args[3];
 const outputFile = args[4];
 const inText = fs.readFileSync(inputFile).toString(); // Считываем из файла как строку
 
 let res;
 if (op === 'code') {
-    res = rle_encode(inText);
+    res = rle_code(inText);
     console.log("Compression ratio = ", inText.length / res.length); // Степень сжатия
 } else if (op === 'decode') {
     res = rle_decode(inText);

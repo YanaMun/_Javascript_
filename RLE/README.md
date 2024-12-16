@@ -83,8 +83,8 @@ else {
 В зависимости от операции, скрипт будет выполнять нужную функцию. После выполнения которой подсчитывается Степень сжатия и выводится в консоль.
 ```javascript
 if (op === 'code') {
-    res = rle_encode(inText);
-    console.log("Compression ratio = ", inText.length / res.length); // Степень сжатия
+    res = rle_code(inText);
+    console.log("Compression ratio = ", inText.length / res.length);
 } else if (op === 'decode') {
     res = rle_decode(inText);
     console.log("Compression ratio = ", res.length / inText.length);

@@ -18,5 +18,5 @@
 2. Путь к входному файлу, содержащий текст, подлежащий обработке.
 3. Путь к выходному файлу, в который будет сохранен результат.
 
-`node rle.js <operation> <inputFile> <outputFile>
+`node rle.js <operation> <inputFile> <outputFile>`
 

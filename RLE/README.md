@@ -18,6 +18,5 @@
 2. Путь к входному файлу, содержащий текст, подлежащий обработке.
 3. Путь к выходному файлу, в который будет сохранен результат.
 
-![image-code](https://github.com/user-attachments/assets/d2e57f6f-a377-4599-af70-78b4a6ba7e4b)
-![image-decode](https://github.com/user-attachments/assets/2d56f129-3e58-4082-ba9c-64529443b0fa)
+`node rle.js <operation> <inputFile> <outputFile>
 

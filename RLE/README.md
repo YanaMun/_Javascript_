@@ -20,3 +20,91 @@
 
 `node rle.js <operation> <inputFile> <outputFile>`
 
+## Функция rle_code (Кодирование строки)
+На вход принимается строка.
+
+Создаём переменную `result` - после выполнения функции здеcь будет храниться закодированная строка.
+```javascript
+let result = '';
+let i = 0;
+```
+
+Далее подсчитываем количество повторений текущего (i-того) символа.
+Если число повторений меньше 3, то повторяем символ указанное количество раз.
+Иначе записываем через `# + число повторений + текущий символ`
+```javascript
+while (i < input.length) {
+        let currentSymbol = input[i];
+        let count = 1;
+
+        while (currentSymbol === input[i + count]) {
+            count++;
+        }
+
+        if (count <= 3) { 
+            result += currentSymbol.repeat(count);
+        } else {
+            result += `#${count}${currentSymbol}`; 
+        }
+        i += count;
+    }
+```
+
+## Функция rle_decode (Декодирование строки)
+На вход принимается строка.
+
+Создаём переменную `result` - после выполнения функции здеcь будет храниться декодированная строка.
+```javascript
+let result = '';
+let i = 0;
+```
+
+Далее ищем спецсимвол #,после которого читаем число повторений и символ, который повторяется.
+Учитываем тот случай, когда символ, который повторяется может быть тоже #.
+Повторяем текущий символ указанное число раз.
+Если встретился обычный символ без спецсимвола, то добавляем его как есть.
+```javascript
+while (i < input.length) {
+        if (input[i] === '#') {
+            i++; 
+            let count = '';
+            while (!isNaN(input[i]) && i < input.length) { 
+                count += input[i];
+                i++;
+            }
+            if (input[i] === '#') { 
+                result += '#'.repeat(Number(count)); 
+            } else {
+                result += input[i].repeat(Number(count)); 
+            }
+        } else {
+            result += input[i]; 
+        }
+        i++;
+    }
+```
+
+# Основной код.
+Получаем доступ к аргументам командной строки через глобальный объект `process.argv` и задаем остальным элементам дополнительные аргументы командной строки, а именно:
+1. Операция
+2. Путь к входному файлу.
+3. Путь к выходному файлу.
+```javascript
+const args = process.argv;
+const op = args[2];
+const inputFile = args[3];
+const outputFile = args[4];
+```
+Далее инициализируем переменную `inText`, которая из входного файла будет считывать строку.
+В зависимости от операции, скрипт будет выполнять нужную функцию. После выполнения которой подсчитывается Степень сжатия и выводится в консоль.
+```javascript
+if (op === 'code') {
+    res = rle_encode(inText);
+    console.log("Compression ratio = ", inText.length / res.length); // Степень сжатия
+} else if (op === 'decode') {
+    res = rle_decode(inText);
+    console.log("Compression ratio = ", res.length / inText.length);
+}
+```
+
+Результат скрипта записывается в выходной файл.

@@ -1,0 +1,120 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+ <title>Game of Life</title> 
+</head> 
+<body> 
+<h1>HTML5 Canvas - Conway's Game of Life</h1> 
+
+<canvas id="myCanvas" width="400" height="400" style="border:1px solid black;"> 
+Sorry, your browser does not support canvas. 
+</canvas> 
+
+<button id="startButton">Start Game</button>
+<button id="pauseButton">Pause Game</button>
+
+<script> 
+const canvas = document.getElementById("myCanvas"); 
+const ctx = canvas.getContext("2d"); 
+
+let cellSize = 20; 
+let fieldSize = 20; 
+
+let curField = new Array(fieldSize); 
+let nextField = new Array(fieldSize); 
+for(let i = 0; i < fieldSize; i++){ 
+ nextField[i] = new Array(fieldSize); 
+ curField[i] = new Array(fieldSize); 
+}
+
+let gameInterval;
+let isPaused = false;
+
+function init(){ 
+ for(let i = 0; i < fieldSize; i++) 
+   for(let j = 0; j < fieldSize; j++) 
+     curField[i][j] = 0; // Инициализируем все ячейки как мертвые
+}
+
+function neighborCount(r, c){
+	let sum = 0;
+	for(let i = -1; i <= 1; i++)
+		for(let j = -1; j <= 1; j++)
+			sum += curField[(r + i + fieldSize) % fieldSize][(c + j + fieldSize) % fieldSize];
+	sum -= curField[r][c];
+	return sum;
+}
+
+function makeStep(){
+	for(let i = 0; i < fieldSize; i++)
+		for(let j = 0; j < fieldSize; j++){
+			let nbs = neighborCount(i, j);
+			if (((curField[i][j] == 0) && (nbs != 3)) || ((curField[i][j] == 1) && ((nbs < 2) || (nbs > 3))))
+				nextField[i][j] = 0;
+			else
+				nextField[i][j] = 1;
+		}
+ 
+	for(let i = 0; i < fieldSize; i++)
+		for(let j = 0; j < fieldSize; j++)
+			curField[i][j] = nextField[i][j];
+}
+
+function draw(){
+	for(let i = 0; i < fieldSize; i++)
+		for(let j = 0; j < fieldSize; j++){
+			if(curField[i][j] == 0)
+				ctx.fillStyle = "white";
+			else
+				ctx.fillStyle = "red";
+			ctx.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+		}
+}
+
+function go(){
+	if (!isPaused) {
+		makeStep();
+		draw();
+	}
+}
+
+// Функция для обработки щелчков мыши по холсту
+canvas.addEventListener('click', function(event) {
+	const rect = canvas.getBoundingClientRect();
+	const x = event.clientX - rect.left;
+	const y = event.clientY - rect.top;
+	const i = Math.floor(y / cellSize);
+	const j = Math.floor(x / cellSize);
+	
+	// Индексы находятся в нужных пределах
+	if (i >= 0 && i < fieldSize && j >= 0 && j < fieldSize) {
+		// Переключение состояния ячейки
+		curField[i][j] = curField[i][j] === 1 ? 0 : 1;
+		draw();
+	}
+});
+
+// Функция для старта игры
+document.getElementById("startButton").addEventListener('click', function() {
+	if (gameInterval) {
+		clearInterval(gameInterval); // Останавливает многократное выполнение go
+	}
+	isPaused = false;
+	gameInterval = setInterval(go, 500);
+});
+
+// Функция для паузы игры
+document.getElementById("pauseButton").addEventListener('click', function() {
+	isPaused = !isPaused;
+	if (isPaused) {
+		clearInterval(gameInterval); // Остановка игры
+	} else {
+		gameInterval = setInterval(go, 500); // Возобновление игры
+	}
+});
+
+init();
+</script> 
+
+</body> 
+</html>

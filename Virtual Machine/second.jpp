@@ -1,0 +1,10 @@
+jin 100
+jin 200
+set 50 1
+set 101 0
+mod 100 200 50
+mov 100 200
+mov 200 50
+cmpj 101 50 10 25
+jout 100
+exit

@@ -1,0 +1,9 @@
+jin 100
+set 101 1
+set 102 1
+set 103 1
+mult 102 101 102
+add 101 103 101
+cmpj 101 100 11 24
+jout 102
+exit

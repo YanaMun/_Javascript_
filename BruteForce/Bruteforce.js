@@ -1,36 +1,33 @@
-function bruteForceSearch(text, pattern) {
+function charComparison(text, idx, pattern, stats) { //функция для посимвольного сравнения подходящей строки и подсчётом количества посимволльных сравнений для статистики
+    for (let i = 0; i < pattern.length; i++) {
+        stats.characterComparisons++; // Увеличиваем счётчик сравнений символов
+        if (text[idx + i] !== pattern[i]) { // Сравниваем символы начиная с idx
+            return false; // Если символы не совпадают, возвращаем false
+        }
+    }
+    return true; // Если все символы совпали, возвращаем true
+}
+
+function bruteForceSearch(text, pattern ) {
     const stats = {
         executionTime: 0,      // Время выполнения поиска
         matches: [],           // Индексы всех совпадений
         exactMatches: 0,       // Количество точных совпадений
-        collisions: 0,         // Количество коллизий
         characterComparisons: 0 // Количество сравнений символов
     };
 
     const patternLength = pattern.length;
     const textLength = text.length;
 
-    const startTime = performance.now(); // Запоминаем время начала поиска
-
-    for (let i = 0; i <= textLength - patternLength; i++) {
-        let match = true; // Предполагаем, что совпадение найдено
-        for (let j = 0; j < patternLength; j++) {
-            stats.characterComparisons++; // Увеличиваем счётчик сравнений символов
-            if (text[i + j] !== pattern[j]) {
-                match = false; // Если символы не совпадают, устанавливаем match в false
-                break; // Выходим из внутреннего цикла
-            }
-        }
-        if (match) {
-            stats.matches.push(i); // Записываем индекс совпадения
-            stats.exactMatches++; // Увеличиваем количество точных совпадений
-        } else {
-            stats.collisions++; // Увеличиваем счётчик коллизий, если совпадение не найдено
+    let startTime = performance.now();  //в переменную записываем время данного момента(для time)
+    for (let i = 0; i <= textLength - patternLength; i++){          //начало цикла, в котором мы проходимся по каждой позиции строки файла
+        if (charComparison(text, i, pattern, stats)) {
+            stats.matches.push(i);    // Записываем индекс совпадения
+            stats.exactMatches++;        // Увеличиваем количество точных совпадений
         }
     }
-
-    stats.executionTime = performance.now() - startTime; // Вычисляем время выполнения
-    return stats; // Возвращаем статистику
+    stats.executionTime = performance.now() - startTime; // Вычисляем время выполнения 
+    return stats;                                   //вывод статистики
 }
 
 
@@ -61,21 +58,12 @@ function simpleHashSearch(text, pattern) {
     }
 
     for (let i = 0; i <= textLength - patternLength; i++) {
-        stats.characterComparisons++; // Увеличиваем счётчик сравнений символов
         if (currentHash === patternHash) { // Если хэши совпадают
-            let match = true; // Предполагаем, что совпадение найдено
-            for (let j = 0; j < patternLength; j++) {
-                stats.characterComparisons++; // Увеличиваем счётчик сравнений символов
-                if (text[i + j] !== pattern[j]) {
-                    match = false; // Если символы не совпадают, устанавливаем match в false
-                    break; // Выходим из внутреннего цикла
-                }
-            }
-            if (match) {
-                stats.matches.push(i); // Записываем индекс совпадения
-                stats.exactMatches++; // Увеличиваем количество точных совпадений
+            if (charComparison(text, i, pattern, stats)) {
+                stats.matches.push(i);    // Записываем индекс совпадения
+                stats.exactMatches++;        // Увеличиваем количество точных совпадений
             } else {
-                stats.collisions++; // Увеличиваем счётчик коллизий, если совпадение не найдено
+                stats.collisions++;          // Увеличиваем счётчик коллизий
             }
         }
 
@@ -109,7 +97,7 @@ function rabinKarpSearch(text, pattern) {
         patternHash += pattern.charCodeAt(i) * Math.pow(2, patternLength - i - 1);
     }
 
-    // Вычисляем хэш для первого окна строки
+    //переменная для текущего хэша, мы будем с каждой итерацией сдвигаться на один символ вычитая хэш левого символа и прибавляя хэш правого(плавающий хэш)
     let currentHash = 0;
     for (let i = 0; i < patternLength; i++) {
         currentHash += text.charCodeAt(i) * Math.pow(2, patternLength - i - 1);
@@ -119,26 +107,16 @@ function rabinKarpSearch(text, pattern) {
 
     // Сдвигаем шаблон по строке и сравниваем хэши
     for (let i = 0; i <= textLength - patternLength; i++) {
-        stats.characterComparisons++; // Увеличиваем счётчик сравнений символов
         if (currentHash === patternHash) { // Если хэши совпадают
-            // Проверяем посимвольное совпадение
-            let match = true;
-            for (let j = 0; j < patternLength; j++) {
-                stats.characterComparisons++; // Увеличиваем счётчик сравнений символов
-                if (text[i + j] !== pattern[j]) {
-                    match = false; // Если символы не совпадают, устанавливаем match в false
-                    break; // Выходим из внутреннего цикла
-                }
-            }
-            if (match) {
-                stats.matches.push(i); // Записываем индекс совпадения
-                stats.exactMatches++; // Увеличиваем количество точных совпадений
+            if (charComparison(text, i, pattern, stats)) {
+                stats.matches.push(i);    // Записываем индекс совпадения
+                stats.exactMatches++;        // Увеличиваем количество точных совпадений
             } else {
-                stats.collisions++; // Увеличиваем счётчик коллизий
+                stats.collisions++;          // Увеличиваем счётчик коллизий
             }
         }
 
-        // Обновляем хэш текущего окна, если оно существует
+        // Обновляем текущий хэш, если он существует
         if (i < textLength - patternLength) {
             currentHash = 2 * (currentHash - text.charCodeAt(i) * maxPowerOfTwo) + text.charCodeAt(i + patternLength);
         }
@@ -158,13 +136,8 @@ try{
     console.log(simpleHashSearch(inputText, "ananas"));
     console.log("\nRabin-Karp\n");
     console.log(rabinKarpSearch(inputText, "ananas"));
-    console.log('')
 }
 catch(error){
     console.log("Возникла ошибка:")
     console.log(error.message);
 }
-
-// console.log(bruteForceSearch(inputText, "князь Андрей"));
-// console.log(simpleHashSearch(inputText, "князь Андрей"));
-// console.log(rabinKarpSearch(inputText, "князь Андрей"));

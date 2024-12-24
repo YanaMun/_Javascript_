@@ -3,22 +3,21 @@ function rle_encode(input) {
     count=1;
 
     for (let i = 0; i < input.length; i++) {
-        let currentSymbol = input[i];
 
-        if (currentSymbol === input[i + 1]) {
+        if (input[i] === input[i + 1]) {
             count++;
         } else {
             
             while (count > 255) {
-                result += `#${String.fromCharCode(255)}${currentSymbol}`;
+                result += '#' + String.fromCharCode(255) + input[i];
                 count -= 255;
             }
 
             
-            if (count >= 4 || currentSymbol === '#') {
-                result += `#${String.fromCharCode(count)}${currentSymbol}`;
+            if (count >= 4 || input[i] === '#') {
+                result += '#' + String.fromCharCode(count) + input[i];
             } else {
-                result += currentSymbol.repeat(count);
+                result += input[i].repeat(count);
             }
 
             count = 1; 
@@ -53,29 +52,34 @@ function rle_decode(input) {
     return result;
 }
 
-
-let fs = require('fs');
+let fs = require('fs'); // Подключаем библиотеку
 
 const args = process.argv;
 const op = args[2]; // encode или decode
 const inputFile = args[3];
 const outputFile = args[4];
-const inText = fs.readFileSync(inputFile,'utf8').trim(); // Считываем из файла как строку
 
-if (!op || !inputFile || !outputFile) {
-    console.log("Usage: node RLE.js <operation> <inputFile> <outputFile>");
-    process.exit(1);
-}
+try{
+    const inText = fs.readFileSync(inputFile,'utf8').trim(); // Считываем из файла как строку
 
-let res;
-if (op === 'encode') {
-    res = rle_encode(inText);
-    let compressionRatio = inText.length / res.length;
-    console.log(`Compression ratio: ${compressionRatio.toFixed(2)}`); // Степень сжатия
-} else if (op === 'decode') {
-    res = rle_decode(inText);
-} else {
-    console.log("Invalid operation. Use 'encode' or 'decode'.");
-}
+    if (!op || !inputFile || !outputFile) {
+        console.log("Usage: node RLE.js <operation> <inputFile> <outputFile>");
+        process.exit(1);
+    }
+
+    let res;
+    if (op === 'encode') {
+        res = rle_encode(inText);
+        let compressionRatio = inText.length / res.length;
+        console.log(`Compression ratio: ${compressionRatio.toFixed(2)}`); // Степень сжатия
+    } else if (op === 'decode') {
+        res = rle_decode(inText);
+    } else {
+        console.log("Invalid operation. Use 'encode' or 'decode'.");
+    }
 
 fs.writeFileSync(outputFile, res,'utf8'); // Записываем результат в файл
+} catch (error) {
+    console.log("Возникла ошибка:");
+    console.log(error.message);
+}

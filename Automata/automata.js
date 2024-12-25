@@ -70,7 +70,9 @@ function automata(text, pattern) {
 
 try {
     const fs = require('fs');
-    let inputText = fs.readFileSync('input.txt', 'utf8');
+    let args = process.argv;
+    let inputFile = args[2];
+    let inputText = fs.readFileSync(inputFile, 'utf8');
     let string = inputText.toString();
 
     console.log(automata(string, "кол"));

@@ -3,10 +3,10 @@ function boyerMooreSearch(text, pattern) {
     const patternLength = pattern.length;
     const result = [];
 
-    // Функция для создания таблицы плохих символов
+    // Функция для создания таблицы плохих символов (самые правые вхождения символов в шаблон)
     function buildBadCharTable(pattern) {
         const table = {};
-        for (let i = 0; i < pattern.length; i++) {
+        for (let i = 0; i < pattern.length; i++) { 
             table[pattern[i]] = i + 1;
         }
         return table;
@@ -34,12 +34,12 @@ function preprocessStrongSuffix(shift, suffixPos, pattern, m) {
     console.table(shift);  // Выводим таблицу сдвигов
 }
 
-// Препроцессинг для случая 2, когда для текущего суффикса не было найдено совпадений
-function preprocessCase2(shift, suffixPos, m) {
+// Препроцессинг для случая, когда для текущего суффикса не было найдено совпадений
+function preprocess(shift, suffixPos, m) {
     let j = suffixPos[0]; // Начинаем с самого длинного суффикса.
     for (let i = 0; i <= m; i++) {
         if (shift[i] === 0) {
-            shift[i] = j;  // Заполняем таблицу сдвигов для слабых суффиксов.
+            shift[i] = j;  // Заполняем таблицу сдвигов.
         }
 
         if (i === j) {
@@ -53,7 +53,7 @@ function preprocessCase2(shift, suffixPos, m) {
     const shift = new Array(patternLength + 1).fill(0);
     const suffixPos = new Array(patternLength + 1);
     preprocessStrongSuffix(shift, suffixPos, pattern, patternLength);
-    preprocessCase2(shift, suffixPos, patternLength);
+    preprocess(shift, suffixPos, patternLength);
 
     console.log("Таблица плохих символов:", badCharTable);
     console.table(shift.map((value, index) => ({ Index: index, Shift: value })));
@@ -81,7 +81,6 @@ function preprocessCase2(shift, suffixPos, m) {
     return result;
 }
 
-// Пример использования
 const text = "abcabcabbccabcdabcdabc";
 const pattern = "abcdabc";
 const result = boyerMooreSearch(text, pattern);
